@@ -1,9 +1,10 @@
 const Stock = require("../model/item.model");
-const { checkStock } = require("../service/home.service");
+const { checkStock } = require("../utils/stockUtils");
+const { getUserId } = require("../middleware/authMiddleware");
 
 exports.getDashboard = async (req, res, next) => {
-  const ownerId = req.ownerId;
-  const username = req.username;
+  const ownerId = getUserId(req);
+  console.log({ ownerId });
   const { itemname, category } = req.query;
 
   const allStock = await Stock.find({
@@ -18,7 +19,6 @@ exports.getDashboard = async (req, res, next) => {
     message: "You are in the dashboard",
     data: {
       message: allStock.length > 0 ? "Items found" : "No items found",
-      username,
       lowStockItems,
       lowStockItemsCount,
       totalStockValue: addTotal.totalStockValue,
@@ -39,9 +39,9 @@ exports.postStock = async (req, res, next) => {
         message: "All fields are required",
       });
     }
-    const ownerId = req.ownerId;
     const { itemname, itemprice, itemunits, itembrand, itemsize, category } =
       req.body;
+    const ownerId = getUserId(req);
     const newItem = new Stock({
       itemname,
       itemprice,
@@ -65,7 +65,7 @@ exports.postStock = async (req, res, next) => {
 
 exports.editStock = async (req, res, next) => {
   const stockId = req.params.stockId;
-  const ownerId = req.ownerId;
+  const ownerId = getUserId(req);
   const updatedData = req.body;
 
   // Validate required fields
@@ -95,7 +95,7 @@ exports.editStock = async (req, res, next) => {
         message: "You are not authorized to edit this stock",
       });
     }
-     await Stock.findByIdAndUpdate(stockId, updatedData, {
+    await Stock.findByIdAndUpdate(stockId, updatedData, {
       new: true,
     });
     res.status(200).json({
@@ -111,7 +111,8 @@ exports.editStock = async (req, res, next) => {
 
 exports.deleteStock = async (req, res, next) => {
   const stockId = req.params.id;
-  
+  const ownerId = getUserId(req);
+
   try {
     const stock = await Stock.findById(stockId);
     if (!stock) {
@@ -119,9 +120,9 @@ exports.deleteStock = async (req, res, next) => {
         message: "Stock is not there already",
       });
     }
-    if (stock.ownerId.toString() !== req.ownerId) {
+    if (stock.ownerId.toString() !== ownerId) {
       return res.status(403).json({
-        message: "You can't delete this stock",
+        message: "Sorry! You can't delete this stock",
       });
     }
     await Stock.findByIdAndDelete(stockId);

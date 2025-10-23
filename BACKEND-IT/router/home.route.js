@@ -1,32 +1,20 @@
 const express = require("express");
 // local module
 const homeController = require("../controller/home.controller");
-const { checkUserMiddleware, userCheck } = require("../service/home.service");
+const { authenticateUser } = require("../middleware/authMiddleware");
 
 const homeRouter = express.Router();
 
-homeRouter.get(
-  "/dashboard",
-  checkUserMiddleware,
-  userCheck,
-  homeController.getDashboard
-);
-homeRouter.post(
-  "/add-item",
-  checkUserMiddleware,
-  userCheck,
-  homeController.postStock
-);
+homeRouter.get("/dashboard", authenticateUser, homeController.getDashboard);
+homeRouter.post("/add-item", authenticateUser, homeController.postStock);
 homeRouter.delete(
   "/delete-item/:id",
-  checkUserMiddleware,
-  userCheck,
+  authenticateUser,
   homeController.deleteStock
 );
 homeRouter.patch(
   "/edit-item/:stockId",
-  checkUserMiddleware,
-  userCheck,
+  authenticateUser,
   homeController.editStock
 );
 

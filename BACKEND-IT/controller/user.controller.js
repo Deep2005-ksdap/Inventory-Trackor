@@ -1,6 +1,24 @@
 const userModel = require("../model/user.model");
 const { validationResult, check } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
+const passwordHashing = async (password) => {
+  const hashPass = await bcrypt.hash(password, 12);
+  return hashPass;
+};
+
+const comparePassword = (password, hash) => {
+  return bcrypt
+    .compare(password, hash)
+    .then((isMatch) => {
+      return isMatch;
+    })
+    .catch((err) => {
+      console.error("Error comparing password:", err);
+      throw err;
+    });
+};
 
 exports.registerUser = [
   check("fullname.firstname")
@@ -31,16 +49,18 @@ exports.registerUser = [
           message: "Invalid email or password",
         });
       }
+
+      const hassPassword = await passwordHashing(password);
       const newUser = new userModel.User({
         fullname: {
           firstname,
           lastname,
         },
         email,
-        password,
+        password: hassPassword,
       });
 
-      const user = await userModel.passwordHashing(newUser);
+      const user = await userModel.User.create(newUser);
       if (user) {
         res.status(200).json({
           message: "User has been Created",
@@ -58,7 +78,7 @@ exports.registerUser = [
 
 exports.loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-
+  
   const user = await userModel.User.findOne({ email });
   if (!user) {
     return res.status(400).json({
@@ -66,7 +86,7 @@ exports.loginUser = async (req, res, next) => {
     });
   }
 
-  const isMatch = await userModel.comparePassword(password, user.password);
+  const isMatch = comparePassword(password, user.password);
   if (!isMatch) {
     return res.status(400).json({
       message: "Email or Password is incorrect",
@@ -74,9 +94,9 @@ exports.loginUser = async (req, res, next) => {
   }
 
   jwt.sign(
-    { userId: user._id, username: user.fullname },
+    { userId: user._id },
     process.env.JWT_Secret,
-    { expiresIn: "1d" },
+    { expiresIn: "7d" },
     (err, token) => {
       if (err) {
         console.error("Error signing JWT:", err);
@@ -85,28 +105,13 @@ exports.loginUser = async (req, res, next) => {
           error: err.message,
         });
       }
-      res.cookie("token", token, { httpOnly: true });
+      res.cookie("token", token, { httpOnly: true }); //prevent from xss attack
       return res.status(200).json({
+        isLoggedIn: true,
         message: "Login successful",
       });
     }
   );
-};
-
-exports.checkAuth = (req, res) => {
-  try {
-    const token = req.cookies.token;
-    if (!token) {
-      return res.status(401).json({ isLoggedIn: false });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.status(200).json({
-      isLoggedIn: true,
-    });
-  } catch (err) {
-    return res.status(401).json({ isLoggedIn: false });
-  }
 };
 
 exports.logoutUser = (req, res, next) => {

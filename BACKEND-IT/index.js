@@ -12,11 +12,11 @@ const app = express();
 
 app.use(cors(
   {
-    origin: "https://inventory-trackor.onrender.com", 
+    origin: process.env.FRONTEND_URL, 
     credentials: true, //allow cookies if needed
   }
 ));
-console.log(process.env.FRONTEND_URL, process.env.JWT_SECRET)
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,7 +28,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT || 8082, () => {
       console.log(`server is running on http://localhost:${process.env.PORT}`);
     });
   })

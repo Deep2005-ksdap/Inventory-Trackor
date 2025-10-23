@@ -10,6 +10,18 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
 
+  const handleDemoLogin = async () => {
+    const email = "ethan.hunt@example.com";
+    const password = "Ethan@123";
+
+    const data = await LoggedInStatus(email, password);
+    setErr(data?.message);
+
+    if (data.message === "Login successful") {
+      navigate("/home/dashboard");
+    }
+  }
+
   const loginHandler = async (e) => {
     e.preventDefault();
     const data = await LoggedInStatus(email, password);
@@ -68,6 +80,9 @@ const LoginPage = () => {
               </Link>
             </p>
           </div>
+          <button onClick={handleDemoLogin} className="bg-blue-500 text-white px-4 py-2 rounded-full font-bold">
+            Demo Login
+          </button>
           <button className="bg-green-500 font-bold text-white w-25 mb-2 py-2 cursor-pointer rounded-[10px] inline hover:bg-green-600">
             Login
           </button>
