@@ -1,91 +1,116 @@
 import { useState } from "react";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Logic } from "../store/Context";
+import { AuthContext } from "../store/AuthContext";
 
 const LoginPage = () => {
-  const { LoggedInStatus } = useContext(Logic);
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
+  const { login } = useContext(AuthContext);
+const navigate = useNavigate();
 
-  const handleDemoLogin = async () => {
-    const email = "ethan.hunt@example.com";
-    const password = "Ethan@123";
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [err, setErr] = useState("");
 
-    const data = await LoggedInStatus(email, password);
-    setErr(data?.message);
+const handleDemoLogin = async () => {
+  const {data, ok} = await login("test@example.com", "123456");
+  setErr(data?.message);
 
-    if (data.message === "Login successful") {
-      navigate("/home/dashboard");
-    }
+  if (ok) {
+    navigate("/home/dashboard");
   }
+};
 
-  const loginHandler = async (e) => {
-    e.preventDefault();
-    const data = await LoggedInStatus(email, password);
-    setErr(data?.message);
+const loginHandler = async (e) => {
+  e.preventDefault();
 
-    if (data.message === "Login successful") {
-      setEmail("");
-      setPassword("");
-      setErr("");
-      navigate("/home/dashboard");
-    }
-  };
+  const {ok, data} = await login(email, password);
+  console.log({ok})
+  setErr(data?.message);
+
+  if (ok) {
+    navigate("/home/dashboard");
+  }
+};
+
 
   return (
-    <div className="bg-[url(/loginInventoryTrackor.jpg)] min-h-screen bg-cover">
-      <div className="h-full flex flex-col gap-4 justify-center items-center min-h-screen px-2 py-2 min-w-[350px] sm:min-w-[450px] ">
-        <h1 className="text-2xl font-bold sm:text-3xl">
-          Login to your <u>INVENTORY</u>
+    <div className="bg-[url(/loginInventoryTrackor.jpg)] min-h-screen bg-cover bg-center flex items-center justify-center px-4">
+      <div className="backdrop-blur-lg rounded-2xl shadow-2xl max-w-md w-full p-8 flex flex-col items-center">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 text-center">
+          Login to your <span className="text-green-600">INVENTORY</span>
         </h1>
+
         {err && (
-          <div className="font-extrabold">
-            <p className="text-red-600 bg-yellow-400 px-4 py-2 rounded-lg">
-              - {err}
-            </p>
-          </div>
+          <p className="w-full bg-red-100 text-red-600 px-4 py-2 rounded-lg mb-4 font-semibold text-center">
+            - {err}
+          </p>
         )}
+
         <form
           onSubmit={(e) => loginHandler(e)}
-          className="border max-w-[1000px] min-w-[300px] rounded-xl flex flex-col backdrop-blur-xl border-white items-center mt-2 px-2 py-4 hover:border-green-500 hover:shadow-xl hover:shadow-gray-700"
+          className="w-full flex flex-col gap-5"
         >
-          <div className="flex flex-col p-4 w-full mb-4 mt-2 gap-4">
-            <label htmlFor="email">Email</label>
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              type="email"
-              name="email"
-              placeholder="eg. test@example.com"
-            />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <label htmlFor="email" className="text-gray-700 font-medium mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="eg. test@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+                required
+              />
+            </div>
 
-            <label htmlFor="password">Password</label>
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              type="password"
-              name="password"
-              placeholder="eg. 123456"
-            />
+            <div className="flex flex-col">
+              <label
+                htmlFor="password"
+                className="text-gray-700 font-medium mb-1"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="eg. 123456"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+                required
+              />
+            </div>
           </div>
 
-          <div className="mb-1 text-left w-full">
-            ~New uesr?
-            <p>
-              <Link to={"/user/register"} className="text-blue-600 px-3">
-                REGISTER yourself
-              </Link>
-            </p>
+          <div className="mt-4 mb-1">
+            <div className="text-sm text-gray-700 ">
+              ~New user?
+              <Link
+                to="/user/register"
+                className="text-blue-600 font-semibold ml-1 hover:underline"
+              >
+                REGISTER
+              </Link>{" "}
+              yourself
+            </div>
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              className="w-full mb-3 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition"
+            >
+              Demo Login
+            </button>
+
+            <button
+              type="submit"
+              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition"
+            >
+              Login
+            </button>
           </div>
-          <button onClick={handleDemoLogin} className="bg-blue-500 text-white px-4 py-2 rounded-full font-bold">
-            Demo Login
-          </button>
-          <button className="bg-green-500 font-bold text-white w-25 mb-2 py-2 cursor-pointer rounded-[10px] inline hover:bg-green-600">
-            Login
-          </button>
         </form>
       </div>
     </div>

@@ -1,9 +1,10 @@
 import { useContext, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Logic } from "../store/Context";
+import { AuthContext } from "../store/AuthContext";
+import { api } from "../store/api";
 
 const RegistrationPage = () => {
-  const { setIsLoggedIn } = useContext(Logic);
+  const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -21,11 +22,11 @@ const RegistrationPage = () => {
         alert("Fill your Details")
       }
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/register`, {
+      const res = await api("/user/register",{
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullname, email, password }),
-      });
+        body: {fullname, email, password}
+      }
+      )
 
       const data = await res.json();
       if (res.status === 400) {
@@ -53,79 +54,116 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="bg-[url(/loginInventoryTrackor.jpg)] min-h-screen bg-cover">
-      <div className="h-full flex flex-col gap-4 justify-center items-center px-2 py-2 min-w-[300px]">
-        <h1 className="text-3xl font-bold">Create Your Account</h1>
-        {err && (
-          <div className="font-extrabold">
-            <p className="text-red-600 text-center px-4 py-2 rounded-lg">
-              {err.message}
+    <div className="bg-[url(/loginInventoryTrackor.jpg)] min-h-screen bg-cover bg-center flex items-center justify-center px-4">
+  <div className="backdrop-blur-lg rounded-2xl shadow-2xl max-w-md w-full p-8 flex flex-col items-center">
+    <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 text-center">
+      Create Your <span className="text-green-600">Account</span>
+    </h1>
+
+    {err && (
+      <div className="w-full mb-4">
+        <p className="text-red-600 text-center bg-red-100 px-4 py-2 rounded-lg font-semibold">
+          {err.message}
+        </p>
+        {err.errors &&
+          err.errors.map((item, index) => (
+            <p
+              key={index}
+              className="text-red-700 bg-yellow-100 px-4 py-2 rounded-lg mb-1 font-medium"
+            >
+              - {item.msg}
             </p>
-            {err.errors
-              ? err.errors.map((item) => (
-                  <p className="text-red-600 bg-yellow-300 px-4 py-2 rounded-lg mb-1">
-                    -{item.msg}{" "}
-                  </p>
-                ))
-              : null}
-          </div>
-        )}
-        <form
-          onSubmit={handleRegisteration}
-          className="border max-w-[1000px] min-w-[350px] rounded-xl flex flex-col backdrop-blur-xl border-white items-center mt-2 px-2 py-4 hover:border-green-500 hover:shadow-xl hover:shadow-gray-700"
-        >
-          <div className="flex flex-col p-4 w-full mb-4 mt-2 gap-4">
-            <label htmlFor="firstname lastname">Full Name</label>
-            <input
-              value={firstname}
-              type="text"
-              name="firstname"
-              id="firstname"
-              placeholder="Firstname"
-              className="mb-1"
-              onChange={(e) => setFirstname(e.target.value)}
-            />
-            <input
-              value={lastname}
-              type="text"
-              name="lastname"
-              id="lastname"
-              onChange={(e) => setLastname(e.target.value)}
-              placeholder="lastname (optional)"
-            />
-
-            <label htmlFor="email">Email:</label>
-            <input
-              value={email}
-              type="email"
-              name="email"
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="eg. test@example.com"
-            />
-
-            <label htmlFor="password">Password:</label>
-            <input
-              value={password}
-              type="password"
-              name="password"
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="your password"
-            />
-          </div>
-
-          <p className="mb-1">
-            ~ already have an
-            <Link className="text-blue-600" to={"/user/login"}>
-              Account
-            </Link>
-            ?
-          </p>
-          <button className="bg-green-500 font-bold text-white w-25 mb-2 py-2 cursor-pointer rounded-[10px] inline hover:bg-green-600">
-            Submit
-          </button>
-        </form>
+          ))}
       </div>
-    </div>
+    )}
+
+    <form
+      onSubmit={handleRegisteration}
+      className="w-full flex flex-col gap-5"
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
+          <label htmlFor="firstname" className="text-gray-700 font-medium mb-1">
+            First Name
+          </label>
+          <input
+            type="text"
+            name="firstname"
+            id="firstname"
+            placeholder="Firstname"
+            value={firstname}
+            onChange={(e) => setFirstname(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="lastname" className="text-gray-700 font-medium mb-1">
+            Last Name (optional)
+          </label>
+          <input
+            type="text"
+            name="lastname"
+            id="lastname"
+            placeholder="Lastname"
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="email" className="text-gray-700 font-medium mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="eg. test@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="password" className="text-gray-700 font-medium mb-1">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+            required
+          />
+        </div>
+      </div>
+
+      <p className="text-sm text-gray-700 mt-1 mb-4 text-center">
+        ~ Already have an{" "}
+        <Link to="/user/login" className="text-blue-600 font-semibold hover:underline">
+          Account
+        </Link>
+        ?
+      </p>
+
+      <button
+        type="submit"
+        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+
   );
 };
 

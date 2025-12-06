@@ -1,38 +1,34 @@
 import { useContext, useEffect, useState } from "react";
-import { Logic } from "../../store/Context";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+import { AuthContext } from "../../store/AuthContext";
+import { StockContext } from "../../store/StockContext";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
-  const { isLoggedIn, setServerData,dispatchLogin } = useContext(Logic);
+  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { setServerData } = useContext(StockContext);
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/logout`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const ok = await logout();
 
-      const data = await res.json();
-      if (res.ok) {
-        dispatchLogin(false);
-        setServerData(null)
+      if (ok) {
         navigate("/");
+      } else {
+        alert("Logout failed! Try again.");
       }
     } catch (err) {
-      alert("Logout failed:", err);
+      alert("Logout failed: " + err.message);
     }
   };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      setActive(true);
-    }
-  }, [isLoggedIn]);
-
   return (
-    <nav
+    <motion.nav
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ ease: "easeOut", duration: 0.8 }}
       className={`flex w-full items-center justify-center  py-2 bg-gradient-to-r from-blue-100 via-white to-green-100 shadow-xl`}
     >
       <div
@@ -88,7 +84,7 @@ const NavBar = () => {
           )}
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 

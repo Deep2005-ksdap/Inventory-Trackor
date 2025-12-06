@@ -1,12 +1,15 @@
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import Context from "./store/Context.jsx";
 import App from "./App.jsx";
+import { AuthProvider } from "./store/AuthContext";
+import { StockProvider } from "./store/StockContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <Context>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Context>
+  <BrowserRouter>
+    <AuthProvider>
+      <StockProvider>
+        <App />
+      </StockProvider>
+    </AuthProvider>
+  </BrowserRouter>
 );

@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { Logic } from "../store/Context";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import { StockContext } from "../store/StockContext";
+import { AuthContext } from "../store/AuthContext";
 
 const CreateStock = () => {
   const navigate = useNavigate();
   const { stockId } = useParams();
   const location = useLocation();
-  const {isLoggedIn, createStock, editItemHandler } = useContext(Logic);
+  const {isLoggedIn} = useContext(AuthContext)
+  const { createStock, editStock } = useContext(StockContext);
   const [category, setCategory] = useState("groceries");
 
   let title;
@@ -35,7 +37,7 @@ const CreateStock = () => {
         itemsize
       );
     } else {
-      await editItemHandler(
+      await editStock(
         stockId,
         itemname,
         itemprice,
