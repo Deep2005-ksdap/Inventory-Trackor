@@ -30,7 +30,6 @@ export const StockProvider = ({ children }) => {
 
     if (ok) {
       const dashboard = data?.data;
-      console.log({ dashboard });
       // Normalize and save all fields
       setAllStock(dashboard?.allStock ?? []);
       setLowStockItems(dashboard?.lowStockItems ?? []);

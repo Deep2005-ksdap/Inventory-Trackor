@@ -4,7 +4,6 @@ const { getUserId } = require("../middleware/authMiddleware");
 
 exports.getDashboard = async (req, res, next) => {
   const ownerId = getUserId(req);
-  console.log({ ownerId });
   const { itemname, category } = req.query;
 
   const allStock = await Stock.find({
