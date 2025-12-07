@@ -8,7 +8,6 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const { isLoggedIn, logout } = useContext(AuthContext);
-  const { setServerData } = useContext(StockContext);
 
   const handleLogout = async () => {
     try {

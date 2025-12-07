@@ -5,8 +5,8 @@ const InfoCard = () => {
   const { lowStockItems, lowStockItemsCount, totalStockValue } =
     useContext(StockContext);
   return (
-      <div className="flex max-w-[900px]  flex-col gap-2 bg-blue-200 p-4 rounded-xl shadow-xl border-white border-1">
-        <div className="flex gap-4">
+      <div className="flex max-w-[900px] w-full flex-col  bg-blue-200 p-5 rounded-xl shadow-xl border-white border-1">
+        <div className="flex justify-between">
           <span>Total Inventory</span>
           <span>Low Stocks</span>
           <span>Items {'<'} 5 Units</span>

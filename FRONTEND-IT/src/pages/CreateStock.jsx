@@ -7,54 +7,41 @@ const CreateStock = () => {
   const navigate = useNavigate();
   const { stockId } = useParams();
   const location = useLocation();
-  const {isLoggedIn} = useContext(AuthContext)
+  const { isLoggedIn } = useContext(AuthContext);
   const { createStock, editStock } = useContext(StockContext);
+
+  const isAddPage = location.pathname === "/home/add-item";
+  const title = isAddPage ? "Add Item" : "Edit Item";
+
+  const { stock } = location.state || {};
+
   const [category, setCategory] = useState("groceries");
-
-  let title;
-  if (location.pathname === "/home/add-item") {
-    title = "ADD stock";
-  } else {
-    title = "EDIT-Item";
-  }
-  const{ stock }= location.state || {};
-
   const [itemname, setItemName] = useState("");
-  const [itemprice, setItemPrice] = useState();
-  const [itemunits, setItemUnits] = useState();
+  const [itemprice, setItemPrice] = useState("");
+  const [itemunits, setItemUnits] = useState("");
   const [itembrand, setItemBrand] = useState("");
   const [itemsize, setItemSize] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleData = async (event) => {
     event.preventDefault();
-    if (location.pathname === "/home/add-item") {
-      await createStock(
-        itemname,
-        itemprice,
-        itemunits,
-        itembrand,
-        category,
-        itemsize
-      );
+    setLoading(true);
+
+    if (isAddPage) {
+      await createStock(itemname, itemprice, itemunits, itembrand, category, itemsize);
     } else {
-      await editStock(
-        stockId,
-        itemname,
-        itemprice,
-        itemunits,
-        itembrand,
-        category,
-        itemsize
-      );
+      await editStock(stockId, itemname, itemprice, itemunits, itembrand, category, itemsize);
     }
+
+    setLoading(false);
     navigate("/home/dashboard");
 
-    setCategory("");
+    setCategory("groceries");
     setItemName("");
     setItemPrice("");
-    setItemSize("");
-    setItemBrand("");
     setItemUnits("");
+    setItemBrand("");
+    setItemSize("");
   };
 
   useEffect(() => {
@@ -68,101 +55,114 @@ const CreateStock = () => {
     }
   }, [stock]);
 
-  return isLoggedIn ? (
-    <div className="min-h-screen  flex justify-center items-center bg-white shadow bg-gradient-to-r from-blue-100 via-white to-green-100">
-      <div className="max-w-[600px] w-full border-white border-2 px-4 py-2 rounded-2xl hover:shadow-xl  ">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center">
+  if (!isLoggedIn) return <Navigate to="/user/login" />;
+
+  return (
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-blue-100 via-white to-green-100 px-4">
+      <div className="w-full max-w-[600px] bg-white/50 backdrop-blur-md border border-white/70 shadow-lg rounded-2xl p-6 transition">
+        <h2 className="text-3xl font-extrabold text-gray-800 text-center mb-6">
           {title}
         </h2>
 
-        <form onSubmit={handleData} className="px-2">
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Item Name</label>
+        <form onSubmit={handleData} className="space-y-5">
+
+          {/* Category */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Category</label>
             <select
-              name="category"
-              onChange={(event) => {
-                setCategory(event.target.value);
-              }}
-              id="category"
-              className="w-full py-2 *border rounded-md  focus:outline-none cursor-pointer"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full py-2 px-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-white"
             >
-              <option value="" disabled>
-                Select from here
-              </option>
               <option value="groceries">Groceries</option>
               <option value="electronics">Electronics</option>
               <option value="clothing">Clothing</option>
             </select>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Item Name</label>
+          {/* Item Name */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Item Name</label>
             <input
               type="text"
               value={itemname}
               onChange={(e) => setItemName(e.target.value)}
-              placeholder="eg. Chips"
+              placeholder="e.g. Chips"
+              className="w-full py-2 px-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Item Price (₹)</label>
+          {/* Price */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Item Price (₹)</label>
             <input
               type="number"
               value={itemprice}
               onChange={(e) => setItemPrice(e.target.value)}
-              placeholder="eg. 499"
+              placeholder="e.g. 499"
+              className="w-full py-2 px-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Unit</label>
+          {/* Unit */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">Units</label>
             <input
               type="number"
               value={itemunits}
               onChange={(e) => setItemUnits(e.target.value)}
-              placeholder="eg. 10"
+              placeholder="e.g. 10"
+              className="w-full py-2 px-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
           </div>
 
+          {/* Conditional: Brand */}
           {category === "electronics" && (
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Brand Name</label>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Brand Name</label>
               <input
                 type="text"
                 value={itembrand}
-                onChange={(e) => {
-                  setItemBrand(e.target.value);
-                }}
-                placeholder="eg. XYZ company"
+                onChange={(e) => setItemBrand(e.target.value)}
+                placeholder="e.g. Sony"
+                className="w-full py-2 px-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           )}
 
+          {/* Conditional: Size */}
           {category === "clothing" && (
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Size</label>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Size</label>
               <input
                 type="text"
                 value={itemsize}
-                placeholder="eg. M"
-                onChange={(e) => {
-                  setItemSize(e.target.value);
-                }}
+                onChange={(e) => setItemSize(e.target.value)}
+                placeholder="e.g. M"
+                className="w-full py-2 px-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           )}
 
+          {/* Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full text-white font-bold py-2 rounded-xl transition 
+              ${loading
+                ? "bg-blue-400 cursor-not-allowed opacity-70"
+                : "bg-blue-600 hover:bg-blue-700"
+              }`}
           >
-            {title === "EDIT-Item" ? "Edit" : "Add"} Item{" "}
+            {loading ? "Processing..." : title}
           </button>
         </form>
       </div>
     </div>
-  ) : <Navigate to={"/user/login"}/>
+  );
 };
 
 export default CreateStock;

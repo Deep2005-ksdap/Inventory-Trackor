@@ -2,36 +2,39 @@ import { useState } from "react";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../store/AuthContext";
+import { FaEyeSlash } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
+import Loader from "../components/layout/Loader";
 
 const LoginPage = () => {
-  const { login } = useContext(AuthContext);
-const navigate = useNavigate();
+  const { login, loading } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [err, setErr] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [err, setErr] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-const handleDemoLogin = async () => {
-  const {data, ok} = await login("test@example.com", "123456");
-  setErr(data?.message);
+  const handleDemoLogin = async () => {
+    const { data, ok } = await login("test@example.com", "123456");
+    setErr(data?.message);
 
-  if (ok) {
-    navigate("/home/dashboard");
-  }
-};
+    if (ok) {
+      navigate("/home/dashboard");
+    }
+  };
 
-const loginHandler = async (e) => {
-  e.preventDefault();
+  const loginHandler = async (e) => {
+    e.preventDefault();
 
-  const {ok, data} = await login(email, password);
-  console.log({ok})
-  setErr(data?.message);
+    const { ok, data } = await login(email, password);
+    console.log({ ok });
+    setErr(data?.message);
 
-  if (ok) {
-    navigate("/home/dashboard");
-  }
-};
-
+    if (ok) {
+      navigate("/home/dashboard");
+    }
+  };
 
   return (
     <div className="bg-[url(/loginInventoryTrackor.jpg)] min-h-screen bg-cover bg-center flex items-center justify-center px-4">
@@ -67,14 +70,32 @@ const loginHandler = async (e) => {
             </div>
 
             <div className="flex flex-col">
-              <label
-                htmlFor="password"
-                className="text-gray-700 font-medium mb-1"
-              >
-                Password
-              </label>
+              <div className="w-full flex justify-between">
+                <label
+                  htmlFor={showPassword ? "text" : "password"}
+                  className="text-gray-700 font-medium mb-1"
+                >
+                  Password
+                </label>
+                <span
+                  className="cursor-pointer font-semibold"
+                  onClick={() => {
+                    if (showPassword) {
+                      setShowPassword(false);
+                    } else {
+                      setShowPassword(true);
+                    }
+                  }}
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="text-2xl" />
+                  ) : (
+                    <FaEye className="text-2xl" />
+                  )}
+                </span>
+              </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="eg. 123456"
                 value={password}
@@ -99,16 +120,20 @@ const loginHandler = async (e) => {
             <button
               type="button"
               onClick={handleDemoLogin}
-              className="w-full mb-3 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition"
+              className={`w-full mb-3 mt-3 bg-blue-400/10 hover:bg-blue-600 text-black hover:text-white font-bold py-2 rounded-lg transition ${
+                loading ? "cursor-wait opacity-70 hover:bg-blue-500" : ""
+              }`}
             >
-              Demo Login
+              {loading ? <Loader type="button" /> : "Demo Login"}
             </button>
 
             <button
               type="submit"
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition"
+              className={`w-full bg-green-500 hover:bg-green-600 text-white 
+  font-bold py-2 rounded-lg transition 
+  ${loading ? "cursor-wait opacity-70 hover:bg-green-500" : ""}`}
             >
-              Login
+              {loading ? <Loader type="button" /> : "Login"}
             </button>
           </div>
         </form>
