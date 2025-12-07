@@ -7,7 +7,7 @@ const CreateStock = () => {
   const navigate = useNavigate();
   const { stockId } = useParams();
   const location = useLocation();
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, checkAuth } = useContext(AuthContext);
   const { createStock, editStock } = useContext(StockContext);
 
   const isAddPage = location.pathname === "/home/add-item";
@@ -43,6 +43,11 @@ const CreateStock = () => {
     setItemBrand("");
     setItemSize("");
   };
+
+    useEffect(() => {
+      // run once on app mount
+      checkAuth();
+    }, [checkAuth]);
 
   useEffect(() => {
     if (stock) {

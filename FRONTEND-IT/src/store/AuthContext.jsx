@@ -52,11 +52,6 @@ export const AuthProvider = ({ children }) => {
     return ok;
   }, []);
 
-  useEffect(() => {
-    // run once on app mount
-    checkAuth();
-  }, [checkAuth]);
-
   return (
     <AuthContext.Provider
       value={{ isLoggedIn, user, loading, checkAuth, login, logout, setUser }}

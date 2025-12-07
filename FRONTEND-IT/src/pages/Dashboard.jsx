@@ -8,7 +8,12 @@ import InfoCard from "../components/ui/InfoCard";
 import CategoryCard from "../components/ui/CategoryCard";
 
 const Dashboard = () => {
-  const { isLoggedIn, user } = useContext(AuthContext);
+  const { isLoggedIn, user, checkAuth } = useContext(AuthContext);
+
+    useEffect(() => {
+      // run once on app mount
+      checkAuth();
+    }, [checkAuth]);
 
   return isLoggedIn ? (
     <main className="h-screen bg-gradient-to-r from-blue-100 via-white to-green-100 px-4 py-4 text-center">
