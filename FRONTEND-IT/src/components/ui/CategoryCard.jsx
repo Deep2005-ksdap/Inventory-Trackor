@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { StockContext } from "../../store/StockContext";
 import { MdDeleteForever } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import ItemCard from "./itemCard";
+import ItemCard from "./ItemCard";
 import Loader from "../layout/Loader";
 
 const CategoryCard = () => {
