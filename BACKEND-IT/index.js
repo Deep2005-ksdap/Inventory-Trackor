@@ -24,12 +24,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/user", userRouter);
 app.use("/home", homeRouter);
 
+const PORT = process.env.PORT || 8082;
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(process.env.PORT || 8082, () => {
-      console.log(`server is running on http://localhost:${process.env.PORT}`);
+    app.listen(PORT, () => {
+      console.log(`server is running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
