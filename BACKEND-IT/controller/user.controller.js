@@ -95,7 +95,7 @@ exports.loginUser = async (req, res, next) => {
 
   jwt.sign(
     { userId: user._id },
-    process.env.JWT_Secret,
+    process.env.JWT_SECRET,
     { expiresIn: "7d" },
     (err, token) => {
       if (err) {
