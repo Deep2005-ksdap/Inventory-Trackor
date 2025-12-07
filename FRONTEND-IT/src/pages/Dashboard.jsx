@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Loader from "../components/layout/Loader";
 import InfoCard from "../components/ui/InfoCard";
 import CategoryCard from "../components/ui/CategoryCard";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const { isLoggedIn, user, checkAuth } = useContext(AuthContext);
