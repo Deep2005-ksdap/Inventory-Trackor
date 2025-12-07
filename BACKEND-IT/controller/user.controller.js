@@ -78,7 +78,7 @@ exports.registerUser = [
 
 exports.loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-  
+
   const user = await userModel.User.findOne({ email });
   if (!user) {
     return res.status(400).json({
@@ -105,7 +105,12 @@ exports.loginUser = async (req, res, next) => {
           error: err.message,
         });
       }
-      res.cookie("token", token, { httpOnly: true }); //prevent from xss attack
+      res.cookie("token", token, {
+        httpOnly: true, //prevent from xss attack
+        secure: true, // only on HTTPS
+        sameSite: "none", // needed for cross-site cookies
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+      }); 
       return res.status(200).json({
         isLoggedIn: true,
         message: "Login successful",
