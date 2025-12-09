@@ -17,7 +17,7 @@ const Dashboard = () => {
     }, [checkAuth]);
 
   return isLoggedIn ? (
-    <main className="h-screen bg-gradient-to-r from-blue-100 via-white to-green-100 px-4 py-4 text-center">
+    <main className="min-h-screen bg-gradient-to-r from-blue-100 via-white to-green-100 px-4 py-4 text-center">
       <h1 className="text-2xl mb-4 font-bold text-blue-500">
         Welcome,
         <span className="font-extrabold text-3xl text-green-500">
