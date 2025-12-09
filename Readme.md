@@ -1,6 +1,31 @@
-# Inventory Trackor
+<img width="800" height="668" alt="image" src="https://github.com/user-attachments/assets/2d0438bd-802f-4aba-b309-91e37b2e3a91" /># Inventory Trackor
 
-A full-stack inventory management app built with React, Node.js, Express, and MongoDB.
+## 🚀 Overview
+
+Inventory-Trackor enables individuals and small businesses to easily manage their stock items, visualize inventory health, and streamline workflow.  
+It is built as a **full-stack, modular, API-driven project** that prioritizes speed, simplicity, and maintainability.
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+- React (Vite)
+- Tailwind CSS
+- React Router
+- Context API
+
+### **Backend**
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- JWT Authentication
+- Cookie-based login
+
+### **Deployment**
+- Frontend: Vercel
+- Backend: Render (With UptimeRobot pinging)
+- Database: MongoDB Atlas
+
+---
 
 ---
 
