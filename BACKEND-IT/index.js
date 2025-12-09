@@ -23,6 +23,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", userRouter);
 app.use("/home", homeRouter);
+app.get("/ping", (req, res) => {
+  res.send("alive");
+});
+
 
 const PORT = process.env.PORT || 8082;
 
