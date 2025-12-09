@@ -1,4 +1,4 @@
-<img width="800" height="668" alt="image" src="https://github.com/user-attachments/assets/2d0438bd-802f-4aba-b309-91e37b2e3a91" /># Inventory Trackor
+# Inventory Trackor
 
 ## 🚀 Overview
 
@@ -123,10 +123,8 @@ npm install
 ---
 
 ## 📱 Screenshots
+---<img width="888" height="693" alt="Screenshot 2025-12-06 200904" src="https://github.com/user-attachments/assets/2b4a84b5-c897-4d28-acbb-c1ca89953799" />
 
-![alt text](image.png)
-
----
 
 ## 🙏 Credits
 
